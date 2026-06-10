@@ -444,6 +444,136 @@
     .stagger .project-btn:nth-child(8) {
       animation-delay: 0.46s
     }
+
+    /* ── MOBILE OPTIMIZATIONS ── */
+    @media (max-width: 768px) {
+      body {
+        cursor: default;
+      }
+
+      /* Hide standard custom cursor frames on touch screens */
+      #cur-dot,
+      #cur-ring {
+        display: none !important;
+      }
+
+      #logo-gif,
+      #logo {
+        top: 20px;
+        left: 20px;
+        height: 44px;
+      }
+
+      #logo-gif {
+        height: 44px;
+        width: auto;
+      }
+
+      #back {
+        top: 20px;
+        left: auto;
+        right: 20px;
+        font-size: 24px;
+      }
+
+      #about-trigger {
+        bottom: 20px;
+        left: 20px;
+      }
+
+      .view {
+        padding: 100px 20px 80px;
+        box-sizing: border-box;
+        justify-content: center;
+      }
+
+      #view-home,
+      #view-periods {
+        justify-content: center;
+      }
+
+      #view-projects {
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      #view-projects .menu {
+        width: 100%;
+        align-items: stretch;
+      }
+
+      .project-btn {
+        width: 100%;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .crumb {
+        margin-bottom: 32px;
+        font-size: 10px;
+        text-align: left;
+        width: 100%;
+      }
+
+      #view-periods .crumb {
+        text-align: center;
+      }
+
+      /* Clamp typography alterations for small heights/widths */
+      .year-btn {
+        font-size: 26px;
+      }
+
+      .period-btn {
+        font-size: 22px;
+        padding: 8px 0;
+      }
+
+      #view-detail {
+        padding: 90px 20px 60px;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      .detail-title {
+        font-size: 28px;
+        line-height: 1.1;
+        margin-bottom: 10px;
+        text-align: left;
+      }
+
+      .detail-desc {
+        font-size: 14px;
+        margin-bottom: 28px;
+        text-align: left;
+      }
+
+      .carousel-wrap {
+        aspect-ratio: 4/3;
+        /* Better handling for mobile screens over wide 16:9 box */
+      }
+
+      .c-bar {
+        margin-top: 14px;
+      }
+
+      .c-arr {
+        font-size: 20px;
+        padding: 10px;
+        /* Better click target */
+      }
+
+      /* Stop desktop cursor assignment styles */
+      .menu-btn,
+      .project-btn,
+      .c-arr,
+      .c-dot,
+      #logo,
+      #back,
+      #about-trigger {
+        cursor: default !important;
+      }
+    }
   </style>
 </head>
 
@@ -477,13 +607,15 @@
 
   <div id="view-about" class="view">
     <div class="about-content">
-      Ik ben Daan, 20 jaar oud.
-      Ik Ben Student Mediavormgeving op SintLucas in Eindhoven, Ex-Software Developing student.
-      Ik maak voornamelijk gebruik van; Blender, After Effects, Photoshop en Godot.
-      Het liefst werk ik in een omgeving met passievolle mensen, mensen die weten wat ze willen.
+      Hoi!
+      <br />
+      <br />
+      Ik ben Daan (20), student Mediavormgeving op SintLucas en ex-Software Development student. In mijn werk
+      gebruik ik voornamelijk Blender, After Effects, Photoshop en Godot. Ik bloei in een omgeving vol passie en duidelijke
+      doelen.
       <br>
       <br>
-      Ik haat ambitieloze mensen
+      Ik haat ambitieloosheid
     </div>
   </div>
 
@@ -514,7 +646,6 @@
           description: "Motion Graphics voor Muziek nummer naar keuze; After Effects & Illustrator - December 2025",
           media: [
             { type: "video", src: "Periode2/vanderrijt_Daan_MV1G_Typography.mp4" },
-            { type: "image", src: "Periode2/tyler_board copy.png" }
           ]
         },
         {
@@ -580,7 +711,6 @@
           description: "Motion Graphics voor Muziek nummer naar keuze; After Effects & Illustrator - December 2025",
           media: [
             { type: "video", src: "Periode2/vanderrijt_Daan_MV1G_Typography.mp4" },
-            { type: "image", src: "Periode2/tyler_board copy.png" }
           ]
         },],
         3: [{

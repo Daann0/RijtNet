@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      /* Veranderd van #f4f3ef naar puur wit */
+      --ink: #1c1b18;
+      --dim: #9a9890;
+      --ease: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR ── */
+    #cur-dot,
+    #cur-ring {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #cur-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--ink);
+    }
+
+    #cur-ring {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--ink);
+      opacity: 0.45;
+      transition: width var(--ease), height var(--ease), opacity var(--ease);
+    }
+
+    body.on-link #cur-ring {
+      width: 50px;
+      height: 50px;
+      opacity: 0.25;
+    }
+
+    /* ── LOGO top-left (GIF) ── */
+    #logo-gif {
+      position: fixed;
+      top: 36px;
+      left: 44px;
+      z-index: 101;
+    }
+
+    #logo {
+      position: fixed;
+      top: 36px;
+      left: 44px;
+      z-index: 100;
+      cursor: none;
+    }
+
+    #logo-text {
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ── BACK arrow top-left (hidden on home) ── */
+    #back {
+      position: fixed;
+      top: 110px;
+      /* Iets verlaagd zodat hij niet over je GIF heen valt */
+      left: 44px;
+      z-index: 100;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 28px;
+      /* Iets groter gemaakt voor betere zichtbaarheid */
+      font-weight: 400;
+      color: var(--ink);
+      /* Veranderd van --dim naar --ink voor meer contrast */
+      cursor: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: color var(--ease), opacity 0.25s, transform var(--ease);
+    }
+
+    #back.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #back:hover {
+      color: var(--dim);
+      transform: translateX(-4px);
+      /* Subtiel interactie-effect */
+    }
+
+    /* ── ABOUT LINK bottom-left ── */
+    #about-trigger {
+      position: fixed;
+      bottom: 36px;
+      left: 44px;
+      z-index: 100;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dim);
+      cursor: none;
+      transition: color var(--ease), opacity 0.25s;
+    }
+
+    #about-trigger:hover {
+      color: var(--ink);
+    }
+
+    #about-trigger.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── VIEWS ── */
+    .view {
+      display: none;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    /* ── SHARED: vertical centered list ── */
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    /* Witregel / scheiding onder de highlight knop */
+    .highlight-separator {
+      margin-bottom: 24px;
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-weight: 300;
+      color: var(--ink);
+      cursor: none;
+      line-height: 1.15;
+      position: relative;
+      transition: opacity var(--ease);
+    }
+
+    .menu-btn::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 0;
+      height: 1px;
+      background: var(--ink);
+      transition: width var(--ease);
+    }
+
+    .menu-btn:hover::after {
+      width: 100%;
+    }
+
+    /* home: large year text */
+    .year-btn {
+      font-size: clamp(22px, 3vw, 38px);
+      letter-spacing: 0.02em;
+    }
+
+    /* period: medium */
+    .period-btn {
+      font-size: clamp(18px, 2.4vw, 30px);
+      letter-spacing: 0.02em;
+    }
+
+    /* project list: smaller, left-aligned */
+    #view-projects .menu {
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .project-btn {
+      font-size: clamp(15px, 1.8vw, 22px);
+      text-align: left;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .project-btn .p-sub {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--dim);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── BREADCRUMB line (periods & projects) ── */
+    .crumb {
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    /* ── ABOUT VIEW ── */
+    #view-about {
+      padding: 0 44px;
+    }
+
+    .about-content {
+      font-size: 16px;
+      line-height: 1.65;
+      max-width: 480px;
+      text-align: center;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+    }
+
+    /* ── DETAIL VIEW ── */
+    #view-detail {
+      justify-content: flex-start;
+      padding: 120px 44px 80px;
+      min-height: 100vh;
+    }
+
+    .detail-title {
+      font-size: clamp(32px, 5vw, 68px);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .detail-desc {
+      font-size: 17px;
+      font-style: italic;
+      color: var(--dim);
+      max-width: 560px;
+      line-height: 1.55;
+      margin-bottom: 52px;
+    }
+
+    /* ── CAROUSEL ── */
+    .carousel-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .c-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    .c-slide {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .c-slide img,
+    .c-slide video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .c-placeholder {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* carousel controls */
+    .c-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .c-arrows {
+      display: flex;
+      gap: 20px;
+    }
+
+    .c-arr {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--dim);
+      cursor: none;
+      transition: color var(--ease);
+      padding: 0;
+    }
+
+    .c-arr:hover {
+      color: var(--ink);
+    }
+
+    .c-counter {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--dim);
+    }
+
+    .c-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .c-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--dim);
+      opacity: 0.35;
+      cursor: none;
+      transition: opacity var(--ease), transform var(--ease);
+    }
+
+    .c-dot.on {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+
+    /* ── FADE TRANSITION ── */
+    .view.active {
+      animation: vfade 0.45s ease forwards;
+    }
+
+    @keyframes vfade {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stagger .menu-btn,
+    .stagger .project-btn {
+      opacity: 0;
+      animation: vfade 0.4s ease forwards;
+    }
+
+    .stagger .menu-btn:nth-child(1),
+    .stagger .project-btn:nth-child(1) {
+      animation-delay: 0.04s
+    }
+
+    .stagger .menu-btn:nth-child(2),
+    .stagger .project-btn:nth-child(2) {
+      animation-delay: 0.10s
+    }
+
+    .stagger .menu-btn:nth-child(3),
+    .stagger .project-btn:nth-child(3) {
+      animation-delay: 0.16s
+    }
+
+    .stagger .menu-btn:nth-child(4),
+    .stagger .project-btn:nth-child(4) {
+      animation-delay: 0.22s
+    }
+
+    .stagger .menu-btn:nth-child(5),
+    .stagger .project-btn:nth-child(5) {
+      animation-delay: 0.28s
+    }
+
+    .stagger .menu-btn:nth-child(6),
+    .stagger .project-btn:nth-child(6) {
+      animation-delay: 0.34s
+    }
+
+    .stagger .menu-btn:nth-child(7),
+    .stagger .project-btn:nth-child(7) {
+      animation-delay: 0.40s
+    }
+
+    .stagger .menu-btn:nth-child(8),
+    .stagger .project-btn:nth-child(8) {
+      animation-delay: 0.46s
+    }
+
+    /* ── MOBILE OPTIMIZATIONS ── */
+    @media (max-width: 768px) {
+      body {
+        cursor: default;
+      }
+
+      /* Hide standard custom cursor frames on touch screens */
+      #cur-dot,
+      #cur-ring {
+        display: none !important;
+      }
+
+      #logo-gif,
+      #logo {
+        top: 20px;
+        left: 20px;
+        height: 44px;
+      }
+
+      #logo-gif {
+        height: 44px;
+        width: auto;
+      }
+
+      #back {
+        top: 20px;
+        left: auto;
+        right: 20px;
+        font-size: 24px;
+      }
+
+      #about-trigger {
+        bottom: 20px;
+        left: 20px;
+      }
+
+      .view {
+        padding: 100px 20px 80px;
+        box-sizing: border-box;
+        justify-content: center;
+      }
+
+      #view-home,
+      #view-periods {
+        justify-content: center;
+      }
+
+      #view-projects {
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      #view-projects .menu {
+        width: 100%;
+        align-items: stretch;
+      }
+
+      .project-btn {
+        width: 100%;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .crumb {
+        margin-bottom: 32px;
+        font-size: 10px;
+        text-align: left;
+        width: 100%;
+      }
+
+      #view-periods .crumb {
+        text-align: center;
+      }
+
+      /* Clamp typography alterations for small heights/widths */
+      .year-btn {
+        font-size: 26px;
+      }
+
+      .period-btn {
+        font-size: 22px;
+        padding: 8px 0;
+      }
+
+      #view-detail {
+        padding: 90px 20px 60px;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      .detail-title {
+        font-size: 28px;
+        line-height: 1.1;
+        margin-bottom: 10px;
+        text-align: left;
+      }
+
+      .detail-desc {
+        font-size: 14px;
+        margin-bottom: 28px;
+        text-align: left;
+      }
+
+      .carousel-wrap {
+        aspect-ratio: 4/3;
+        /* Better handling for mobile screens over wide 16:9 box */
+      }
+
+      .c-bar {
+        margin-top: 14px;
+      }
+
+      .c-arr {
+        font-size: 20px;
+        padding: 10px;
+        /* Better click target */
+      }
+
+      /* Stop desktop cursor assignment styles */
+      .menu-btn,
+      .project-btn,
+      .c-arr,
+      .c-dot,
+      #logo,
+      #back,
+      #about-trigger {
+        cursor: default !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <img src="Logonobackground.gif" id="logo-gif" height="56" onclick="goHome()" style="cursor:none" />
+
+  <div id="logo" onclick="goHome()">
+    <span id="logo-text"></span>
+  </div>
+
+  <button id="back" onclick="goBack()">←</button>
+  <button id="about-trigger" onclick="openAbout()">About</button>
+
+  <div id="view-home" class="view active">
+    <div class="menu stagger" id="year-menu"></div>
+  </div>
+
+  <div id="view-periods" class="view">
+    <p class="crumb" id="crumb-periods"></p>
+    <div class="menu stagger" id="period-menu"></div>
+  </div>
+
+  <div id="view-projects" class="view">
+    <p class="crumb" id="crumb-projects"></p>
+    <div class="menu stagger" id="project-menu"></div>
+  </div>
+
+  <div id="view-about" class="view">
+    <div class="about-content">
+      Hoi!
+      <br />
+      <br />
+      Ik ben Daan (20), student Mediavormgeving op SintLucas en ex-Software Development student. In mijn werk
+      gebruik ik voornamelijk Blender, After Effects, Photoshop en Godot. Ik bloei in een omgeving vol passie en duidelijke
+      doelen.
+      <br>
+      <br>
+      Ik haat ambitieloosheid
+    </div>
+  </div>
+
+  <div id="view-detail" class="view">
+    <h1 class="detail-title" id="d-title"></h1>
+    <p class="detail-desc" id="d-desc"></p>
+    <div class="carousel-wrap">
+      <div class="c-track" id="c-track"></div>
+    </div>
+    <div class="c-bar">
+      <div class="c-arrows">
+        <button class="c-arr" id="c-prev">←</button>
+        <button class="c-arr" id="c-next">→</button>
+      </div>
+      <div class="c-dots" id="c-dots"></div>
+      <span class="c-counter" id="c-counter"></span>
+    </div>
+  </div>
+
+  <script>
+    /* ══════════════════════════════════════════════════════════════════
+       PROJECT DATA  —  Voeg hier eventueel je highlights toe onder 'highlights'
+       ══════════════════════════════════════════════════════════════════ */
+    const portfolioData = {
+      'highlights': [
+        {
+          title: "Typografische Animatie",
+          description: "Motion Graphics voor Muziek nummer naar keuze; After Effects & Illustrator - December 2025",
+          media: [
+            { type: "video", src: "Periode2/vanderrijt_Daan_MV1G_Typography.mp4" },
+          ]
+        },
+        {
+          title: "VOGUE Magazine",
+          description: "Printklaar magazine ontworpen binnen de stijl van VOGUE; Indesign & Photoshop - April 2026",
+          media: [
+            { type: "image", src: "Periode3/Mag/Mag1.png" },
+            { type: "image", src: "Periode3/Mag/Mag2.png" },
+            { type: "image", src: "Periode3/Mag/Mag3.png" },
+            { type: "image", src: "Periode3/Mag/Mag4.png" },
+            { type: "image", src: "Periode3/Mag/Mag5.png" },
+            { type: "image", src: "Periode3/Mag/Mag6.png" },
+            { type: "image", src: "Periode3/Mag/Mag7.png" },
+            { type: "image", src: "Periode3/Mag/Mag8.png" },
+            { type: "image", src: "Periode3/Mag/Mag9.png" },
+            { type: "image", src: "Periode3/Mag/Mag10.png" },
+            { type: "image", src: "Periode3/Mag/Mag11.png" },
+            { type: "image", src: "Periode3/Mag/Mag12.png" },
+          ]
+        },
+        {
+          title: "VALLIS Game",
+          description: "Game Gemaakt voor de SHiNE Expositie op school; Godot & Blender - April 2026",
+          media: [
+            { type: "image", src: "Periode3/render.png" },
+            { type: "video", src: "Periode3/preview.mp4" },
+            { type: "video", src: "Periode3/model.mp4" },
+            { type: "image", src: "Periode3/render2.png" },
+            { type: "image", src: "Periode3/cover.png" },
+            { type: "image", src: "Periode3/blender.png" },
+          ]
+        },
+        {
+          title: "Looping Animation",
+          description: "Looping Animatie; After Effects & Illustrator - Juni 2026.",
+          media: [
+            { type: "video", src: "Periode4/aeLooping.mp4" },
+          ]
+        }
+
+      ],
+      //JAAR 1
+      1: {
+        1: [
+          {
+            title: "Persona Illustratie", description: "Een werk dat mij reflecteert; Adobe Fresco - October 2025", media: [
+              { type: "image", src: "Periode1/persona.jpg" },
+
+            ]
+          },
+          {
+            title: "Naturaly Poster Serie", description: "Een serie posters met zelfgemaakte beelden uit de natuur; Photoshop - October 2025", media: [
+              { type: "image", src: "Periode1/naturaly1.png" },
+              { type: "image", src: "Periode1/naturaly2.png" },
+              { type: "image", src: "Periode1/naturaly3.png" },
+
+
+            ]
+          },
+        ],
+        2: [{
+          title: "Typografische Animatie",
+          description: "Motion Graphics voor Muziek nummer naar keuze; After Effects & Illustrator - December 2025",
+          media: [
+            { type: "video", src: "Periode2/vanderrijt_Daan_MV1G_Typography.mp4" },
+          ]
+        },],
+        3: [{
+          title: "VALLIS Game",
+          description: "Game Gemaakt voor de SHiNE Expositie op school; Godot & Blender - April 2026",
+          media: [
+            { type: "image", src: "Periode3/render.png" },
+            { type: "video", src: "Periode3/preview.mp4" },
+            { type: "video", src: "Periode3/model.mp4" },
+            { type: "image", src: "Periode3/render2.png" },
+            { type: "image", src: "Periode3/cover.png" },
+            { type: "image", src: "Periode3/blender.png" },
+          ]
+        },
+        {
+          title: "VOGUE Magazine",
+          description: "Printklaar magazine ontworpen binnen de stijl van VOGUE; Indesign & Photoshop - April 2026",
+          media: [
+            { type: "image", src: "Periode3/Mag/Mag1.png" },
+            { type: "image", src: "Periode3/Mag/Mag2.png" },
+            { type: "image", src: "Periode3/Mag/Mag3.png" },
+            { type: "image", src: "Periode3/Mag/Mag4.png" },
+            { type: "image", src: "Periode3/Mag/Mag5.png" },
+            { type: "image", src: "Periode3/Mag/Mag6.png" },
+            { type: "image", src: "Periode3/Mag/Mag7.png" },
+            { type: "image", src: "Periode3/Mag/Mag8.png" },
+            { type: "image", src: "Periode3/Mag/Mag9.png" },
+            { type: "image", src: "Periode3/Mag/Mag10.png" },
+            { type: "image", src: "Periode3/Mag/Mag11.png" },
+            { type: "image", src: "Periode3/Mag/Mag12.png" },
+          ]
+        },
+        ],
+        4: [{
+          title: "Looping Animation",
+          description: "Looping Animatie; After Effects & Illustrator - Juni 2026.",
+          media: [
+            { type: "video", src: "Periode4/aeLooping.mp4" },
+          ]
+        },
+        {
+          title: "ZEEMAN Grillz ",
+          description: "Marketing opdracht Zeeman; Blender & Photoshop - Juni 2026",
+          media: [
+            { type: "image", src: "Periode3/grills2.png" },
+            { type: "image", src: "Periode3/grills.png" },
+
+          ]
+        },
+
+        ],
+      },
+      //JAAR 2
+      2: {
+        1: [{ title: "Projectnaam 1A", description: "Omschrijving.", media: [] }],
+        2: [{ title: "Projectnaam 2A", description: "Omschrijving.", media: [] }],
+        3: [{ title: "Projectnaam 3A", description: "Omschrijving.", media: [] }],
+        4: [{ title: "Projectnaam 4A", description: "Omschrijving.", media: [] }],
+      },
+      //JAAR 3
+      3: {
+        1: [{ title: "Projectnaam 1A", description: "Omschrijving.", media: [] }],
+        2: [{ title: "Projectnaam 2A", description: "Omschrijving.", media: [] }],
+        3: [{ title: "Projectnaam 3A", description: "Omschrijving.", media: [] }],
+        4: [{ title: "Projectnaam 4A", description: "Omschrijving.", media: [] }],
+      },
+      //JAAR 4
+      4: {
+        1: [{ title: "Projectnaam 1A", description: "Omschrijving.", media: [] }],
+        2: [{ title: "Projectnaam 2A", description: "Omschrijving.", media: [] }],
+        3: [{ title: "Projectnaam 3A", description: "Omschrijving.", media: [] }],
+        4: [{ title: "Projectnaam 4A", description: "Omschrijving.", media: [] }],
+      },
+    };
+
+    /* ── STATE ── */
+    let curYear = null, curPeriod = null, curProject = null, ci = 0;
+    const backStack = [];
+
+    /* ── VIEWS ── */
+    const views = ['home', 'periods', 'projects', 'about', 'detail'];
+    function show(name) {
+      views.forEach(v => {
+        document.getElementById('view-' + v).classList.toggle('active', v === name);
+      });
+      document.getElementById('back').classList.toggle('visible', name !== 'home');
+      document.getElementById('about-trigger').classList.toggle('hidden', name === 'about');
+
+      // GIF logo is nu altijd zichtbaar en klikbaar, maar we kunnen de opacity tweaken indien gewenst
+      document.getElementById('logo-gif').style.opacity = '1';
+
+      window.scrollTo(0, 0);
+    }
+
+    function goHome() { backStack.length = 0; buildHome(); show('home'); }
+
+    function goBack() {
+      const fn = backStack.pop();
+      if (fn) fn(); else goHome();
+    }
+
+    /* ── STAGGER re-trigger ── */
+    function restagger(el) {
+      el.classList.remove('stagger');
+      void el.offsetWidth;
+      el.classList.add('stagger');
+    }
+
+    /* ── HOME ── */
+    function buildHome() {
+      const m = document.getElementById('year-menu');
+      m.innerHTML = '';
+
+      // Highlights knop toevoegen
+      const hb = document.createElement('button');
+      hb.className = 'menu-btn year-btn highlight-separator';
+      hb.textContent = 'Highlights';
+      hb.onclick = () => { backStack.push(buildHome.bind(null)); openHighlights(); };
+      m.appendChild(hb);
+
+      // Leerjaren knoppen
+      //[1, 2, 3, 4] VOEG TOE BIJ ELK JAAR ----------------------------------------
+      [1].forEach(y => {
+        const b = document.createElement('button');
+        b.className = 'menu-btn year-btn';
+        b.textContent = 'Leerjaar ' + y;
+        b.onclick = () => { backStack.push(buildHome.bind(null)); openYear(y); };
+        m.appendChild(b);
+      });
+      restagger(m);
+    }
+
+    /* ── HIGHLIGHTS OPENER ── */
+    function openHighlights() {
+      curYear = 'highlights';
+      document.getElementById('crumb-projects').textContent = 'Mijn Beste Werk · Highlights';
+      const projects = portfolioData['highlights'] || [];
+      const m = document.getElementById('project-menu');
+      m.innerHTML = '';
+      projects.forEach((proj, i) => {
+        const b = document.createElement('button');
+        b.className = 'menu-btn project-btn';
+        b.innerHTML = `<span>${proj.title}</span><span class="p-sub">${proj.description}</span>`;
+        b.onclick = () => { backStack.push(openHighlights); openProject('highlights', null, i); };
+        m.appendChild(b);
+      });
+      restagger(m);
+      show('projects');
+    }
+
+    /* ── PERIODS ── */
+    function openYear(year) {
+      curYear = year;
+      document.getElementById('crumb-periods').textContent = 'Leerjaar ' + year;
+      const m = document.getElementById('period-menu');
+      m.innerHTML = '';
+      [1, 2, 3, 4].forEach(p => {
+        const b = document.createElement('button');
+        b.className = 'menu-btn period-btn';
+        b.textContent = 'Periode ' + p;
+        b.onclick = () => { backStack.push(() => openYear(year)); openPeriod(year, p); };
+        m.appendChild(b);
+      });
+      restagger(m);
+      show('periods');
+    }
+
+    /* ── PROJECTS ── */
+    function openPeriod(year, period) {
+      curPeriod = period;
+      document.getElementById('crumb-projects').textContent = `Leerjaar ${year}  ·  Periode ${period}`;
+      const projects = portfolioData[year]?.[period] || [];
+      const m = document.getElementById('project-menu');
+      m.innerHTML = '';
+      projects.forEach((proj, i) => {
+        const b = document.createElement('button');
+        b.className = 'menu-btn project-btn';
+        b.innerHTML = `<span>${proj.title}</span><span class="p-sub">${proj.description}</span>`;
+        b.onclick = () => { backStack.push(() => openPeriod(year, period)); openProject(year, period, i); };
+        m.appendChild(b);
+      });
+      restagger(m);
+      show('projects');
+    }
+
+    /* ── ABOUT ME ── */
+    function openAbout() {
+      const currentActiveView = views.find(v => document.getElementById('view-' + v).classList.contains('active'));
+
+      if (currentActiveView && currentActiveView !== 'about') {
+        if (currentActiveView === 'home') {
+          backStack.push(goHome);
+        } else if (currentActiveView === 'periods') {
+          backStack.push(() => openYear(curYear));
+        } else if (currentActiveView === 'projects') {
+          if (curYear === 'highlights') {
+            backStack.push(openHighlights);
+          } else {
+            backStack.push(() => openPeriod(curYear, curPeriod));
+          }
+        } else if (currentActiveView === 'detail') {
+          backStack.push(() => openProject(curProject.year, curProject.period, curProject.index));
+        }
+      }
+      show('about');
+    }
+
+    /* ── DETAIL ── */
+    function openProject(year, period, index) {
+      const proj = period === null ? portfolioData[year]?.[index] : portfolioData[year]?.[period]?.[index];
+      if (!proj) return;
+      curProject = { year, period, index };
+      document.getElementById('d-title').textContent = proj.title;
+      document.getElementById('d-desc').textContent = proj.description;
+      buildCarousel(proj.media);
+      show('detail');
+    }
+
+    /* ── CAROUSEL ── */
+    function buildCarousel(media) {
+      ci = 0;
+      const track = document.getElementById('c-track');
+      const dots = document.getElementById('c-dots');
+      track.innerHTML = dots.innerHTML = '';
+
+      if (!media.length) {
+        track.innerHTML = `<div class="c-slide"><span class="c-placeholder">Media komt hier</span></div>`;
+        document.getElementById('c-counter').textContent = '';
+        return;
+      }
+
+      media.forEach((item, i) => {
+        const slide = document.createElement('div');
+        slide.className = 'c-slide';
+        slide.innerHTML = item.type === 'video'
+          ? `<video src="${item.src}" muted loop playsinline preload="metadata"></video>`
+          : `<img src="${item.src}" alt="media ${i + 1}" loading="lazy" />`;
+        track.appendChild(slide);
+
+        const d = document.createElement('div');
+        d.className = 'c-dot' + (i === 0 ? ' on' : '');
+        d.onclick = () => slide_to(i);
+        dots.appendChild(d);
+      });
+
+      updateCarousel(media);
+    }
+
+    function slide_to(i) {
+      const proj = curProject.period === null
+        ? portfolioData[curProject.year]?.[curProject.index]
+        : portfolioData[curProject.year]?.[curProject.period]?.[curProject.index];
+      const media = proj?.media || [];
+      ci = ((i % media.length) + media.length) % media.length;
+      updateCarousel(media);
+    }
+
+    function updateCarousel(media) {
+      document.getElementById('c-track').style.transform = `translateX(-${ci * 100}%)`;
+      document.querySelectorAll('.c-dot').forEach((d, i) => d.classList.toggle('on', i === ci));
+      document.getElementById('c-counter').textContent = media.length ? `${ci + 1} / ${media.length}` : '';
+
+      // Zoek alle slides op
+      document.querySelectorAll('.c-slide').forEach((slide, i) => {
+        const video = slide.querySelector('video');
+        if (video) {
+          if (i === ci) {
+            // Als dit de actieve slide is, speel de video af
+            video.play().catch(() => { });
+          } else {
+            // Als dit niet de actieve slide is, zet de video op pauze en reset de tijd
+            video.pause();
+            video.currentTime = 0;
+          }
+        }
+      });
+    }
+
+    document.getElementById('c-prev').onclick = () => slide_to(ci - 1);
+    document.getElementById('c-next').onclick = () => slide_to(ci + 1);
+
+    document.addEventListener('keydown', e => {
+      if (document.getElementById('view-detail').classList.contains('active')) {
+        if (e.key === 'ArrowLeft') slide_to(ci - 1);
+        if (e.key === 'ArrowRight') slide_to(ci + 1);
+      }
+      if (e.key === 'Escape') goBack();
+    });
+
+    /* ── CURSOR ── */
+    const dot = document.getElementById('cur-dot');
+    const ring = document.getElementById('cur-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+    (function loop() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.addEventListener('mouseover', e => {
+      if (e.target.closest('button,[onclick]')) document.body.classList.add('on-link');
+    });
+    document.addEventListener('mouseout', e => {
+      if (e.target.closest('button,[onclick]')) document.body.classList.remove('on-link');
+    });
+
+    /* ── INIT ── */
+    buildHome();
+  </script>
+</body>
+
+</html>
